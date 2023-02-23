@@ -1,12 +1,13 @@
+import getUrl from '@/helpers/getUrl'
 import useRoomSocket from '@/hooks/useRoomSocket'
 import { Input } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useRef } from 'react'
 
-const url = process.env.SERVER_URL ? process.env.SERVER_URL + '/rooms/' : 'http://localhost:8080/rooms/'
-
-export default function () {
+export default function ({ serverUrl }) {
   const { query: { roomId }, isReady } = useRouter()
+  const url = serverUrl + '/rooms/' + roomId + '/'
+  console.log({ url })
   const { socket, room } = useRoomSocket(url + roomId, isReady)
   const inputRef = useRef()
 
@@ -28,3 +29,5 @@ export default function () {
     </>
   )
 }
+
+export const getServerSideProps = getUrl

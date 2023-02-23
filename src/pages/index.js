@@ -1,9 +1,10 @@
+import getUrl from '@/helpers/getUrl'
 import { UserContext } from '@/providers/UserProvider'
 import { Box, Button, Input } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useContext } from 'react'
 
-export default function () {
+export default function ({ serverUrl }) {
   const { userNickName } = useContext(UserContext)
   const router = useRouter()
 
@@ -12,7 +13,7 @@ export default function () {
     const formData = new window.FormData(e.target)
     const roomName = formData.get('roomName')
 
-    const url = process.env.SERVER_URL ? process.env.SERVER_URL + '/rooms/new' : 'http://localhost:8080/rooms/new'
+    const url = serverUrl + '/rooms/new'
     const data = { roomName, userNickName }
     const options = {
       method: 'POST',
@@ -30,3 +31,5 @@ export default function () {
     </Box>
   )
 }
+
+export const getStaticProps = getUrl
