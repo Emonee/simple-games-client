@@ -1,9 +1,12 @@
+import UserProvider from '@/providers/UserProvider'
 import { ChakraProvider } from '@chakra-ui/react'
 
 export default function ({ Component, pageProps }) {
   return (
     <ChakraProvider>
-      <Component {...pageProps} />
+      <UserProvider>
+        <Component {...pageProps} />
+      </UserProvider>
     </ChakraProvider>
   )
 }
