@@ -6,9 +6,8 @@ import { useRef } from 'react'
 
 export default function ({ serverUrl }) {
   const { query: { roomId }, isReady } = useRouter()
-  const url = serverUrl + '/rooms/' + roomId + '/'
-  console.log({ url })
-  const { socket, room } = useRoomSocket(url + roomId, isReady)
+  const url = serverUrl + '/rooms/' + roomId
+  const { socket, room } = useRoomSocket(url, isReady)
   const inputRef = useRef()
 
   const changeRoomName = (e) => {
