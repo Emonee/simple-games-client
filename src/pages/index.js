@@ -2,16 +2,13 @@ import BasicModal from '@/components/modals/BasicModal'
 import getUrl from '@/helpers/getUrl'
 import useBasicToast from '@/hooks/useBasicToast'
 import useLoadingBtn from '@/hooks/useLoadingBtn'
-import { UserContext } from '@/providers/UserProvider'
 import { Button, Center, Input, useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { useContext } from 'react'
 
 export default function ({ serverUrl }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useBasicToast()
   const [LoadingBtn, setIsLoading] = useLoadingBtn()
-  const { userNickName } = useContext(UserContext)
   const router = useRouter()
 
   const getNewRoom = async (e) => {
@@ -21,7 +18,7 @@ export default function ({ serverUrl }) {
     const roomName = formData.get('roomName')
 
     const url = serverUrl + '/rooms/new'
-    const data = { roomName, userNickName }
+    const data = { roomName }
     const options = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -1,19 +1,11 @@
+import InitialLoadingScreen from '@/components/InitialLoadingScreen'
 import NewUser from '@/components/NewUser'
-import { Center, Spinner } from '@chakra-ui/react'
 import { createContext, useEffect, useState } from 'react'
 
 const STATE_ENUMS = {
   loading: 0,
   unauthenticated: 1,
   authenticated: 2
-}
-
-const InitialLoadingScreen = () => {
-  return (
-    <Center height='100vh' width='100vw' position='relative' bgColor='blue.800'>
-      <Spinner color='blue.400' boxSize='50vw' thickness='7px' display='block' />
-    </Center>
-  )
 }
 
 export const UserContext = createContext()

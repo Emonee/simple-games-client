@@ -1,3 +1,4 @@
+import { RoomContext } from '@/providers/RoomProvider'
 import { ChatIcon } from '@chakra-ui/icons'
 import {
   Drawer,
@@ -11,11 +12,12 @@ import {
   Input,
   IconButton
 } from '@chakra-ui/react'
-import { useRef } from 'react'
+import { useContext, useRef } from 'react'
 import ChatMessagesBox from './ChatMessagesBox'
 import RoomUsers from './RoomUsers'
 
-export default function ({ socket, room }) {
+export default function () {
+  const { chat, socket, participants } = useContext(RoomContext)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const inputRef = useRef()
 
@@ -23,7 +25,7 @@ export default function ({ socket, room }) {
     e.preventDefault()
     const formData = new window.FormData(e.target)
     const newMessage = formData.get('newMessage')
-    socket?.emit('sendMessage', newMessage)
+    socket.emit('sendMessage', newMessage)
     inputRef.current.value = ''
   }
 
@@ -52,8 +54,8 @@ export default function ({ socket, room }) {
           <DrawerHeader>Chat room</DrawerHeader>
 
           <DrawerBody display='flex' flexDir='column' gap='4'>
-            <RoomUsers users={getFinctionUsers(1)} />
-            <ChatMessagesBox messages={room?.chat} flex='1' />
+            <RoomUsers users={participants} />
+            <ChatMessagesBox messages={chat} flex='1' />
           </DrawerBody>
           <DrawerFooter as='form' onSubmit={sendMessage}>
             <Input ref={inputRef} name='newMessage' placeholder='Type here...' bgColor='white' color='black' />
@@ -62,11 +64,4 @@ export default function ({ socket, room }) {
       </Drawer>
     </>
   )
-}
-
-function getFinctionUsers (num) {
-  const users = Array(num).fill({
-    nickName: 'Emonsito el bonito'
-  })
-  return users
 }
