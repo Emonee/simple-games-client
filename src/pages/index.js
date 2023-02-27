@@ -3,6 +3,7 @@ import getUrl from '@/helpers/getUrl'
 import useBasicToast from '@/hooks/useBasicToast'
 import useLoadingBtn from '@/hooks/useLoadingBtn'
 import { Button, Center, Input, useDisclosure } from '@chakra-ui/react'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 export default function ({ serverUrl }) {
@@ -41,6 +42,9 @@ export default function ({ serverUrl }) {
   }
   return (
     <>
+      <Head>
+        <title>Simple games 👾</title>
+      </Head>
       <BasicModal
         isOpen={isOpen}
         onClose={onClose}
