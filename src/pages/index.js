@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import GameCard from '@/components/cards/GameCard'
-import CreateRoomModal from '@/components/modals/CreateRoomModal'
+import FormModal from '@/components/modals/FormModal'
 import getUrl from '@/helpers/getUrl'
 import { Center, Input, useDisclosure } from '@chakra-ui/react'
 import { useState } from 'react'
@@ -51,7 +51,7 @@ export default function ({ serverUrl, games }) {
       <Head>
         <title>Simple games 👾</title>
       </Head>
-      <CreateRoomModal
+      <FormModal
         isOpen={isOpen}
         onClose={onClose}
         onSubmit={getNewRoom}
@@ -60,7 +60,7 @@ export default function ({ serverUrl, games }) {
         secondBtnChildren='Submit'
       >
         <Input isRequired name='roomName' placeholder='Room name' />
-      </CreateRoomModal>
+      </FormModal>
       <Center flexDir='column' gap='3' p='7' minH='100vh' minW='100vw' bgColor='blue.800'>
         {
           games.map((game) => <GameCard key={game.name} openModalAndSelectGame={openModalAndSelectGame} {...game} />)
