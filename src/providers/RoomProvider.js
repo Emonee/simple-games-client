@@ -25,7 +25,6 @@ export default function ({ children, url }) {
     socket.on('getParticipants', setParticipants)
 
     socket.once('connect', () => socket.emit('joinGameRoom', userNickName))
-    socket.on('disconnect', () => console.log('disconected'))
 
     return () => socket.disconnect()
   }, [])

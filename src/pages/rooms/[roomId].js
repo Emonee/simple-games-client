@@ -22,4 +22,11 @@ export default function ({ serverUrl }) {
   )
 }
 
-export const getServerSideProps = getUrl
+export async function getServerSideProps () {
+  const serverUrl = await getUrl()
+  return {
+    props: {
+      serverUrl
+    }
+  }
+}

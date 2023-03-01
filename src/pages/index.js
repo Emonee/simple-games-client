@@ -1,25 +1,29 @@
-import BasicModal from '@/components/modals/BasicModal'
-import getUrl from '@/helpers/getUrl'
-import useBasicToast from '@/hooks/useBasicToast'
-import useLoadingBtn from '@/hooks/useLoadingBtn'
-import { Button, Center, Input, useDisclosure } from '@chakra-ui/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import GameCard from '@/components/cards/GameCard'
+import FormModal from '@/components/modals/FormModal'
+import getUrl from '@/helpers/getUrl'
+import { Center, Input, useDisclosure } from '@chakra-ui/react'
+import { useState } from 'react'
+import useBasicToast from '@/hooks/useBasicToast'
 
-export default function ({ serverUrl }) {
+export default function ({ serverUrl, games }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useBasicToast()
-  const [LoadingBtn, setIsLoading] = useLoadingBtn()
+  const [selectedGame, setSelectedGame] = useState(null)
   const router = useRouter()
 
+  const openModalAndSelectGame = (gameName) => {
+    setSelectedGame(gameName)
+    onOpen()
+  }
   const getNewRoom = async (e) => {
     e.preventDefault()
-    setIsLoading.toggle()
     const formData = new window.FormData(e.target)
     const roomName = formData.get('roomName')
 
     const url = serverUrl + '/rooms/new'
-    const data = { roomName }
+    const data = { roomName, roomsGame: selectedGame }
     const options = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -28,11 +32,12 @@ export default function ({ serverUrl }) {
 
     try {
       const res = await fetch(url, options)
-      const text = await res.text()
-      router.push(`/rooms/${text}`)
+      if (!res.ok) throw new Error(res.statusText)
+      const { newRoomId } = await res.json()
+      onClose()
+      router.push(`/rooms/${newRoomId}`)
     } catch (error) {
       console.error(error)
-      setIsLoading.toggle()
       toast({
         title: 'Error trying to create a room 😖',
         status: 'error',
@@ -40,24 +45,39 @@ export default function ({ serverUrl }) {
       })
     }
   }
+
   return (
     <>
       <Head>
         <title>Simple games 👾</title>
       </Head>
-      <BasicModal
+      <FormModal
         isOpen={isOpen}
         onClose={onClose}
-        modalHeaderChildren='To join a room, ask your friend for the url to join and just put it in your browser 🎮.'
-        firstBtnChildren='Ok!'
-      />
-      <Center as='form' onSubmit={getNewRoom} flexDir='column' gap='3' p='7' minH='100vh' minW='100vw' bgColor='blue.800'>
-        <Input isRequired name='roomName' placeholder='Room name' bgColor='white' maxLength='27' maxW='500px' />
-        <LoadingBtn w='200px' type='submit' colorScheme='green'>Create room</LoadingBtn>
-        <Button onClick={onOpen} w='200px' colorScheme='blue'>Join room</Button>
+        onSubmit={getNewRoom}
+        modalHeaderChildren='Set a room name, then just share the given url to your friends!'
+        firstBtnChildren='Cancel'
+        secondBtnChildren='Submit'
+      >
+        <Input isRequired name='roomName' placeholder='Room name' />
+      </FormModal>
+      <Center flexDir='column' gap='3' p='7' minH='100vh' minW='100vw' bgColor='blue.800'>
+        {
+          games.map((game) => <GameCard key={game.name} openModalAndSelectGame={openModalAndSelectGame} {...game} />)
+        }
       </Center>
     </>
   )
 }
 
-export const getStaticProps = getUrl
+export async function getStaticProps () {
+  const serverUrl = await getUrl()
+  const res = await fetch(serverUrl + '/games')
+  const { games } = await res.json()
+  return {
+    props: {
+      serverUrl,
+      games
+    }
+  }
+}
