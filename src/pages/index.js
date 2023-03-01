@@ -33,9 +33,9 @@ export default function ({ serverUrl, games }) {
     try {
       const res = await fetch(url, options)
       if (!res.ok) throw new Error(res.statusText)
-      const text = await res.text()
+      const { newRoomId } = await res.json()
       onClose()
-      router.push(`/rooms/${text}`)
+      router.push(`/rooms/${newRoomId}`)
     } catch (error) {
       console.error(error)
       toast({
