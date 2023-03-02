@@ -1,4 +1,6 @@
 import InitialLoadingScreen from '@/components/InitialLoadingScreen'
+import useBasicToast from '@/hooks/useBasicToast'
+import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import { UserContext } from './UserProvider'
@@ -6,6 +8,8 @@ import { UserContext } from './UserProvider'
 export const RoomContext = createContext()
 
 export default function ({ children, url }) {
+  const router = useRouter()
+  const toast = useBasicToast()
   const { userNickName } = useContext(UserContext)
   const [userData, setUserData] = useState(null)
   const [generalRoomData, setGeneralRoomData] = useState(null)
@@ -25,6 +29,13 @@ export default function ({ children, url }) {
     socket.on('getParticipants', setParticipants)
 
     socket.once('connect', () => socket.emit('joinGameRoom', userNickName))
+    socket.on('error', ({ message }) => {
+      toast({
+        status: 'error',
+        title: message
+      })
+      router.push('/')
+    })
 
     return () => socket.disconnect()
   }, [])
